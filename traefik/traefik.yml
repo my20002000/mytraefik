@@ -1,0 +1,36 @@
+global:
+  checkNewVersion: false
+  sendAnonymousUsage: false
+log:
+  level: WARN
+  format: common
+api:
+  dashboard: true
+  insecure: true
+ping: {}
+accessLog: {}
+providers:
+  docker:
+    watch: true
+    exposedByDefault: false
+    endpoint: unix:///var/run/docker.sock
+    swarmMode: false
+    useBindPortIP: false
+    network: traefik
+  file:
+    watch: true
+    directory: /etc/traefik/config
+    debugLogGeneratedTemplate: true
+entryPoints:
+  http:
+    address: :80
+  https:
+    address: :443
+  samba139:
+    address: :139
+  samba445:
+    address: :445
+experimental:
+  localPlugins:
+    example:
+      moduleName: github.com/traefik/plugindemo

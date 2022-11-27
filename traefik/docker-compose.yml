@@ -1,0 +1,36 @@
+version: '3.7'
+
+services:
+
+  traefik:
+    container_name: traefik
+    image: traefik:v2.9
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+      - 139:139
+      - 445:445
+    networks:
+      npm:
+        ipv4_address: 172.16.0.2
+    command: traefik --configFile /etc/traefik.yml
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./ssl/:/data/ssl/:ro
+      - ./traefik.yml:/etc/traefik.yml:ro
+      - ./config/:/etc/traefik/config/:ro
+      - ./plugins-local:/plugins-local/:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider --proxy off localhost:8080/ping || exit 1"]
+      interval: 1h
+      timeout: 5s
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: 5
+
+networks:
+  npm:
+    external: true

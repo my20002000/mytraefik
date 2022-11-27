@@ -1,0 +1,14 @@
+tls:
+  options:
+    default:
+      minVersion: VersionTLS11
+      maxVersion: VersionTLS13
+    requireusertls:
+      minVersion: VersionTLS11
+      maxVersion: VersionTLS13
+  stores:
+    default:
+      defaultCertificate:
+        certFile: /data/ssl/pod.com.crt
+        keyFile: /data/ssl/pod.com.key
+

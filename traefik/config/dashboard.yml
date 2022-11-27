@@ -1,0 +1,53 @@
+http:
+  middlewares:
+    dash-compress:
+      compress: {}
+    dash-redirect:
+      redirectScheme:
+        scheme: https
+        permanent: true
+    dash-auth:
+      basicAuth:
+        users:
+          - 'admin:admin'
+  services:
+    dash-noop:
+      LoadBalancer:
+        servers:
+          - url: ''
+  routers:
+    dashboard-redirect-https:
+      rule: Host(`dashboard.pod.com`)
+      entryPoints:
+        - http
+      service: dash-noop
+      middlewares:
+        - dash-redirect
+      priority: 100
+    dashboard:
+      rule: Host(`dashboard.pod.com`)
+      entrypoints:
+        - https
+      service: dashboard@internal
+      middlewares:
+        - dash-auth
+        - dash-compress
+      tls: {}
+    api:
+      rule: Host(`dashboard.pod.com`) && PathPrefix(`/api`)
+      entrypoints:
+        - https
+      service: api@internal
+      middlewares:
+        - dash-auth
+        - dash-compress
+      tls: {}
+    ping:
+      rule: Host(`dashboard.pod.com`) && PathPrefix(`/ping`)
+      entrypoints:
+        - https
+      service: ping@internal
+      middlewares:
+        - dash-auth
+        - dash-compress
+      tls: {}

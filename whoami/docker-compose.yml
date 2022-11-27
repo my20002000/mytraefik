@@ -1,0 +1,27 @@
+services:
+  app:
+    image: traefik/whoami
+    container_name: whoami
+    networks:
+      npm:
+        ipv4_address: 172.16.0.3 
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami-http.entrypoints=http"
+      - "traefik.http.routers.whoami-http.rule=Host(`whoami.pod.com`)"
+      - "traefik.http.routers.whoami-http.middlewares=extranet@file"
+      - "traefik.http.routers.whoami-https.entrypoints=https"
+      - "traefik.http.routers.whoami-https.rule=Host(`whoami.pod.com`)"
+      - "traefik.http.routers.whoami-https.middlewares=extranet@file"
+      - "traefik.http.routers.whoami-https.tls=true"
+      - "traefik.http.routers.whoami-https.service=whoami-backend"
+      - "traefik.http.services.whoami-backend.loadbalancer.server.scheme=http"
+      - "traefik.http.services.whoami-backend.loadbalancer.server.port=80"
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: 5
+networks:
+  npm:
+    external: true

@@ -1,0 +1,31 @@
+services:
+  app:
+    image: gitea/gitea
+    container_name: gitea
+    networks:
+      npm:
+        ipv4_address: 172.16.0.4
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.gitea-http.entrypoints=http"
+      - "traefik.http.routers.gitea-http.rule=Host(`gitea.pod.com`)"
+      - "traefik.http.routers.gitea-http.middlewares=extranet@file"
+      - "traefik.http.routers.gitea-https.entrypoints=https"
+      - "traefik.http.routers.gitea-https.rule=Host(`gitea.pod.com`)"
+      - "traefik.http.routers.gitea-https.middlewares=extranet@file"
+      - "traefik.http.routers.gitea-https.tls=true"
+      - "traefik.http.routers.gitea-https.service=gitea-backend"
+      - "traefik.http.services.gitea-backend.loadbalancer.server.scheme=http"
+      - "traefik.http.services.gitea-backend.loadbalancer.server.port=3000"
+    volumes:
+      - ./data:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: 5
+networks:
+  npm:
+    external: true
