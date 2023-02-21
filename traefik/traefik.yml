@@ -16,7 +16,7 @@ providers:
     endpoint: unix:///var/run/docker.sock
     swarmMode: false
     useBindPortIP: false
-    network: traefik
+    network: npm
   file:
     watch: true
     directory: /etc/traefik/config
