@@ -10,6 +10,7 @@ http:
       basicAuth:
         users:
           - 'admin:admin'
+          #echo $(htpasswd -nB admin)
   services:
     dash-noop:
       LoadBalancer:
