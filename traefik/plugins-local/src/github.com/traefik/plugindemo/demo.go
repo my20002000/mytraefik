@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"strings"
+	"net"
 )
 
 // Config the plugin configuration.
@@ -35,10 +36,11 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 }
 
 func (a *Demo) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
-	strSplit := strings.Split(req.RemoteAddr, ":")
-	idx := len(strSplit)
-	if idx > 1 {
-		req.Header.Set("X-Real-Port", strSplit[idx-1])
+	host, port, err := net.SplitHostPort(req.RemoteAddr)
+	if err != nil {
+		req.Header.Set("X-Real-Port", "0")
+	}else{
+		req.Header.Set("X-Real-Port", port)
 	}
 	a.next.ServeHTTP(rw, req)
 }
